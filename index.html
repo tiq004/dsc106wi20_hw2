@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <link href="https://fonts.googleapis.com/css?family=Montserrat%7CPaytone+One&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://unpkg.com/purecss@1.0.1/build/pure-min.css"
+    integrity="sha384-oAOxQR6DkCoMliIh8yFnu25d7Eq/PHS21PClpwjOTeU2jRSq11vu66rf90/cZr47" crossorigin="anonymous">
+  <link rel="stylesheet" href="hw2_style.css">
+  <title>Tianran's Dingus & Widget</title>
+  <meta charset="UTF-8">
+</head>
+<body onload="ok()">
+<div class="header">
+  <img src="logo.png" alt="logo" />
+  <header>
+    <h1>Global Dashboard</h1>
+  </header>
+</div>
+
+
+<div class="container">
+  <div class='column'>
+    <h3>Dingus</h3>
+    <p id = "dingus">0</p>
+  </div>
+  <div class='column'>
+    <h3>Widget</h3>
+    <p id = "widget">0</p>
+  </div>
+  <div class='column'>
+    <h3>Sales</h3>
+    <p>
+      <span style='color:green'>$</span>
+      <span id = "total" style='color:blue'>0.00</span>
+    </p>
+  </div>
+</div>
+<hr>
+
+<table id= "myTable" class="tg">
+  <caption>Order History</caption>
+  <tr>
+    <th class="tg-6qw1" rowspan="2">ID#</th>
+    <th class="tg-baqh" rowspan="2">Data</th>
+    <th class="tg-baqh" colspan="2">Quantity</th>
+    <th class="tg-baqh" rowspan="2">Total</th>
+  </tr>
+  <tr>
+    <th class="tg-baqh">Dingus</th>
+    <th class="tg-baqh">Widget</th>
+  </tr>
+  <tbody>
+
+    <script>
+      // Constants
+      const DINGUS_PRICE = 14.25;
+      const WIDGET_PRICE = 9.99;
+      const ZERO_FORMAT = '0.00';
+      const DEBUG = true; // Where might this flag be used? (It's not mandatory)
+
+      // Global store (What else would you need here?)
+      let store = {
+        orderHistory: []
+      };
+      
+      function generateEntries() {
+        // Returns an orderHistory array
+        // [ID#, Date, Dingus quantity, Widget quantity]
+        return [
+          [1, '01/01/2020', 1, 1],
+          [2, '01/02/2020', 2, 2]
+        ]
+      }
+      var result = generateEntries();
+      var table = document.getElementById("myTable");
+      var counter = 2;
+      var din = 0;
+      var wid = 0;
+      var total = 0;
+      var id;
+      
+      function ok(){store = JSON.parse(localStorage['orderHistory']);
+      let orders = store.orderHistory;
+        for (i = 0; i < orders.length; i++) {
+        var row = table.insertRow();
+        var c1 = row.insertCell(0);
+        var c2 = row.insertCell(1);
+        var c3 = row.insertCell(2);
+        var c4 = row.insertCell(3);
+        var c5 = row.insertCell(4);
+        c1.innerHTML = orders[i][0][0];
+        c2.innerHTML = orders[i][0][1];
+        c3.innerHTML = orders[i][0][2];
+        c4.innerHTML = orders[i][0][3];
+        c5.innerHTML = orders[i][0][4];}}
+      
+      console.log('orderHistory');
+      function insert(result) {
+        var i = 1;
+        for (i = 0; i < result.length; i++) {
+        var row = table.insertRow(counter);
+        var c1 = row.insertCell(0);
+        var c2 = row.insertCell(1);
+        var c3 = row.insertCell(2);
+        var c4 = row.insertCell(3);
+        var c5 = row.insertCell(4);
+        c1.style.backgroundColor = "#b6b3b3";
+        c1.innerHTML = result[i][0];
+        c2.innerHTML = result[i][1];
+        c3.innerHTML = result[i][2];
+        c4.innerHTML = result[i][3];
+        c5.innerHTML = Number(result[i][2]*DINGUS_PRICE + result[i][3]*WIDGET_PRICE).toFixed(2);
+        counter = counter + 1;
+        din = din + Number(result[i][2]);
+        wid = wid + Number(result[i][3]);
+        total = total + result[i][2]*DINGUS_PRICE + result[i][3]*WIDGET_PRICE;
+        document.getElementById("dingus").innerText = din;
+        document.getElementById("widget").innerText = wid;
+        document.getElementById("total").innerText = total;
+      }
+      document.getElementById('button').disabled = true;
+    }
+
+      insert(result);
+        function push() {
+          var today = new Date();
+          var dd = String(today.getDate()).padStart(2, '0');
+          var mm = String(today.getMonth() + 1).padStart(2, '0');
+          var yyyy = today.getFullYear();
+          today = mm + '/' + dd + '/' + yyyy;
+          num1 = document.getElementById("num1").value;
+          dingus = dingus + num1;
+          num2 = document.getElementById("num2").value;
+          widget = widget + num2;
+          row = [[counter-1, today, num1, num2, (num1 * DINGUS_PRICE + num2 * WIDGET_PRICE).toFixed(2)]];
+          insert(row);
+          store.orderHistory.insert(row);
+          localStorage.setItem('orderHistory', JSON.stringify(store));
+        }
+    </script>
+    
+    <tr>
+      <td class="tg-6qw1" colspan="5">©2020 D&amp;W Worldwide.</td>
+    </tr>
+  </tbody>
+</table>
+<br>
+
+<main>
+  <div class="order">
+    <details>
+      <summary onclick='showDialog()'>Order Form</summary>
+      <dialog id='dialog'></dialog>
+      <hr>
+      <form class=pure-form id = "myForm">
+        <script>
+          function calc1(){
+            var v1 = document.getElementById("num1").value;
+            var d = document.getElementById("dp").value;
+            document.getElementById("totald").value = v1*d;
+            var v2 = document.getElementById("num2").value;
+            var w = document.getElementById("wp").value;
+            document.getElementById("tt").value = (v1*d + parseInt(v2*1)*w).toFixed(2);
+            document.getElementById('button').disabled = false;}
+
+          function calc2(){
+           var v2 = document.getElementById("num2").value;
+            var w = document.getElementById("wp").value;
+            document.getElementById("totalw").value = v2*w;
+            var v1 = document.getElementById("num1").value;
+            var d = document.getElementById("dp").value;
+            document.getElementById("tt").value = (v2*w + parseInt(v1*1)*d).toFixed(2);
+            document.getElementById('button').disabled = false;}
+          </script>
+
+        <label>
+          Dingus <input id = "num1" value = 0 onkeyup="calc1()">
+        </label>
+        <label>
+          @ <input id = "dp" value = 14.25 readonly = "readonly">
+        </label>
+        <label>
+          =$ <input id = "totald" value = 0.00 onkeyup="calc1()" readonly = "readonly">
+        </label>
+        <br>
+        <br>
+        <label>
+          Widget <input id = "num2" value = 0 onkeyup="calc2()">
+        </label>
+        <label>
+          @ <input id = "wp" value = 9.99 readonly = "readonly">
+        </label>
+        <label>
+          =$ <input id = "totalw" value = 0.00 onkeyup="calc2()" readonly = "readonly">
+        </label>
+        <br>
+        <br>
+        <label>
+          Total $ <input id = "tt" value = 0.00 readonly = "readonly">
+        </label>
+        <br>
+        <br>
+        <script>
+          function cancel() {
+            document.getElementById("myForm").reset();
+          }
+        </script>
+
+        <button class="button-error pure-button" type = "button" onclick="cancel()">Cancel</button>
+        <button class="button-success pure-button" type = "button" id = "button" onclick="push(); insert(); cancel()" disabled>Order</button>
+      </form>
+    </details>
+    <br>
+    <br>
+  </div>
+</main>
+</body>
+
+</html>
